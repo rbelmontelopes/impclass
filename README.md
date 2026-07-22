@@ -7,17 +7,17 @@ In a certain sense, the present pipeline follows a similar logic used in Buscoge
 
 # Usage
 
-You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like
+You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like. The *--busco_db* parameter is mandatory in any case, while the *--taxon* parameter is needed in any run that will construct a database (as the taxon name indicates which genomes to download).
 ```bash
-nextflow run impclass.nf -params-file params.yml
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota
 ```
-OR
+OR to construct a database and identify the genomes
 ```bash
 nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
 ```
 A example run with a prebuild database
 ```bash
-nextflow run impclass.nf -params-file params.yml --orthodb ./orthofinder_db/Results_30jun --identify_dir ./to_identify  --busco_db ascomycota_odb10 
+nextflow run impclass.nf -params-file params.yml --orthodb PATH/orthofinder_db/Results_30jun --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
 ```
 A example run for just constructing a database
 ```bash
