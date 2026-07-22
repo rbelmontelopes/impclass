@@ -38,13 +38,8 @@ You can also adjust the number of threads for Orthofinder steps with (i.e --orth
 You can change the default output dir (results) with --outdir NEW_DIR_NAME
 
 
-#Expected results
+# Expected results
 
-
-
-
-
-Results directory
 The basic structure of the results directory is show below.
 
 ```bash
