@@ -1,17 +1,35 @@
+#Objectives of this pipeline
+
 First of all, this pipeline is not a primary classification tool (although you could use it as one if you have enough computer resources), and is instead intended to improve pre-existing classification. The motivation behind this pipeline was the classification of metagenome assembled genomes from fungi and algae from Antarctic cryptoendolithic communities, for which BUSCO (Tegenfeldt et al. 2025) autolineage was returning classification at Phyla, Division or Order levels, and for which Eukcc2 (Saary et al 2020) was sometimes able to arrive to Family or Genera level, with the caveat that for lichenized fungi it was classifing most of them as Leotiomyceta or Parmeliaceae, but no Parmeliaceae was ever reported from this communities using culturomics or targeted metagenomics. Aiming to confirm or improve the given classifications, the pipeline downloads genomes from the NCBI, uses BUSCO to generate sets of single copy markers from the selected BUSCO database, constructs a core database with Orthofinder3 (Emms et al. 2026), and then add the the genomes to this core database. The use of the BUSCO databases to generate the sets of markers was selected as it can generate hundreds to thousands of markers specific for a selected database, while at the same time avoiding to use all the predicted proteins of the given genomes, allowing for a speed-up in the Orthofinder steps. Additionally, although the pipeline uses only BUSCOS predicted as single copy, these are not always single copy in comparison between a large number of species, but the use of the Orthofinder3 assign to a core database option allows the use of duplicated genes as it infers a species tree using Astral-Pro (Zhang et al 2025), which was designed to handle multi-copy genes. 
 
 In a certain sense, the present pipeline follows a similar logic used in Buscogeny (Webster & Chapman 2026) with the use of BUSCO markers to infer trees, which also also allows the use of nucleotide sequences, while the present pipeline is restricted to proteins. The two methods differ in their functionallities for downloading genomes from the NCBI (integrated in the present pipeline and with an auxiliary script in Buscogeny), and specially in the way the trees are infered, with Buscogeny using a concatenated supermatrix and Maximum Likelihood (ML), while the present pipeline use the inference of ML gene trees for the production of a species tree based on the multispecies coalescent process.The present pipeline also allows the addition of new genomes to previously computed Orthofinder3 runs using its assign function, what avoids to running the analysis from the start everytime there is need to add a new genome.
 
+
+#Usage
+
+You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like
+
+>nextflow run impclass.nf -params-file params.yml
+
+OR
+
+>nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
+
+A example run with a prebuild database
+
+>nextflow run impclass.nf -params-file params.yml --orthodb ./orthofinder_db/Results_30jun --identify_dir ./to_identify  --busco_db ascomycota_odb10 
+
+A example run for just constructing a database
+
+>nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
+
 The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change the lines 'conda "${baseDir}/envs/ncbi.yml"', 'conda "${baseDir}/envs/busco.yml"', and 'conda "${baseDir}/envs/orthofinder.yml"' to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
+
+##Additional parameters and others
 
 The pipeline have a lot of parameters (see the params.yml file for more details), of which the only obligatory in all cases is the busco database to be used (i.e. --busco_db ascomycota_odb10). Note that the database name needs to be recognized by BUSCO as a valid database, with normally have the taxa names all in lowercase followed by the database version (i.e. "_odb10" or "_odb12"). Check the BUSCO site (https://busco-data.ezlab.org/v6/data/lineages/) to know which databases are avaliable (or use the command 'busco --list-datasets'). If you already have the BUSCO databases downloaded is highly indicate to set the parameter "--busco_downloads" to the directory where the databases are, otherwise it will perform the download inside the folder from where the pipeline is running.
 
-
 If you do not pass a previously build orthofinder database folder (i.e.  --orthodb ./orthofinder_db/Results_30jun, always use the Results_XXXX folder), is obligatory to indicate the taxon that will be used for downloading the genomes and constructing the database (i.e. --taxon Ascomycota). By default the pipeline will download only reference genomes with assembly level indicated as "complete,chromosome,scaffold" (controled by the --assembly_level parameter). 
-
-
-
-
 
 Is highly indicated that you set the number of cpus for BUSCO (i.e. --cpus 8) as well as number of parallel BUSCO runs you can do in your system for the reference genomes (i.e --busco_parallel_reference 1) and for the genomes that you want to identify (i.e --busco_parallel_identify 1). Multiple BUSCO runs at the same time can slow this step, so set the number of parallel tasks accordingly to the capacity of your system. On a laptop with 20 cores one parallel task for each seems to be the best option.
 
@@ -20,36 +38,23 @@ You can also adjust the number of threads for Orthofinder steps with (i.e --orth
 You can change the default output dir (results) with --outdir NEW_DIR_NAME
 
 
+#Expected results
 
 
 
-You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like
-
-nextflow run impclass.nf -params-file params.yml
-
-OR
-
-nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
-
-A example run with a prebuild database
-
-nextflow run impclass.nf -params-file params.yml --orthodb ./orthofinder_db/Results_30jun --identify_dir ./to_identify  --busco_db ascomycota_odb10 
-
-A example run for just constructing a database
-
-nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
 
 
 Results directory
 The basic structure of the results directory is show below.
 
+```bash
 .
 ├── busco_proteins
-
 ├── identify_buscos
 ├── ncbi_dataset.zip
 ├── orthofinder_assign
 └── orthofinder_db
+```
 
 -busco_proteins contains the single copy BUSCOs predicted for the reference genomes and the summary of the BUSCO runs for each genome
 -identify_buscos contains the single copy BUSCOs predicted for the genomes to identify and the summary of the BUSCO runs for each genome
