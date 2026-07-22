@@ -1,11 +1,11 @@
-#Objectives of this pipeline
+# Objectives of this pipeline
 
 First of all, this pipeline is not a primary classification tool (although you could use it as one if you have enough computer resources), and is instead intended to improve pre-existing classification. The motivation behind this pipeline was the classification of metagenome assembled genomes from fungi and algae from Antarctic cryptoendolithic communities, for which BUSCO (Tegenfeldt et al. 2025) autolineage was returning classification at Phyla, Division or Order levels, and for which Eukcc2 (Saary et al 2020) was sometimes able to arrive to Family or Genera level, with the caveat that for lichenized fungi it was classifing most of them as Leotiomyceta or Parmeliaceae, but no Parmeliaceae was ever reported from this communities using culturomics or targeted metagenomics. Aiming to confirm or improve the given classifications, the pipeline downloads genomes from the NCBI, uses BUSCO to generate sets of single copy markers from the selected BUSCO database, constructs a core database with Orthofinder3 (Emms et al. 2026), and then add the the genomes to this core database. The use of the BUSCO databases to generate the sets of markers was selected as it can generate hundreds to thousands of markers specific for a selected database, while at the same time avoiding to use all the predicted proteins of the given genomes, allowing for a speed-up in the Orthofinder steps. Additionally, although the pipeline uses only BUSCOS predicted as single copy, these are not always single copy in comparison between a large number of species, but the use of the Orthofinder3 assign to a core database option allows the use of duplicated genes as it infers a species tree using Astral-Pro (Zhang et al 2025), which was designed to handle multi-copy genes. 
 
 In a certain sense, the present pipeline follows a similar logic used in Buscogeny (Webster & Chapman 2026) with the use of BUSCO markers to infer trees, which also also allows the use of nucleotide sequences, while the present pipeline is restricted to proteins. The two methods differ in their functionallities for downloading genomes from the NCBI (integrated in the present pipeline and with an auxiliary script in Buscogeny), and specially in the way the trees are infered, with Buscogeny using a concatenated supermatrix and Maximum Likelihood (ML), while the present pipeline use the inference of ML gene trees for the production of a species tree based on the multispecies coalescent process.The present pipeline also allows the addition of new genomes to previously computed Orthofinder3 runs using its assign function, what avoids to running the analysis from the start everytime there is need to add a new genome.
 
 
-#Usage
+# Usage
 
 You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like
 ```bash
@@ -25,7 +25,7 @@ nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db 
 ```
 The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change the lines 'conda "${baseDir}/envs/ncbi.yml"', 'conda "${baseDir}/envs/busco.yml"', and 'conda "${baseDir}/envs/orthofinder.yml"' to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
 
-##Additional parameters and others
+## Additional parameters and others
 
 The pipeline have a lot of parameters (see the params.yml file for more details), of which the only obligatory in all cases is the busco database to be used (i.e. --busco_db ascomycota_odb10). Note that the database name needs to be recognized by BUSCO as a valid database, with normally have the taxa names all in lowercase followed by the database version (i.e. "_odb10" or "_odb12"). Check the BUSCO site (https://busco-data.ezlab.org/v6/data/lineages/) to know which databases are avaliable (or use the command 'busco --list-datasets'). If you already have the BUSCO databases downloaded is highly indicate to set the parameter "--busco_downloads" to the directory where the databases are, otherwise it will perform the download inside the folder from where the pipeline is running.
 
@@ -63,10 +63,7 @@ The basic structure of the results directory is show below.
 -orthofinder_db contains the core database used to assign the new genomes. This can be re-used for further analysis (i.e. if you find that just the NCBI reference genomes do not give you enough resolution, add additional genomes to the directory with genomes to identify an run the pipeline indicating the folder with the results of the core database)
 
 
-
-
-
-REFERENCES
+# References
 
 Emms, D.M., Liu, Y., Belcher, L. et al. OrthoFinder: improved phylogenetic orthology inference with enhanced accuracy and scalability. Nat Methods (2026). https://doi.org/10.1038/s41592-026-03126-6
 
