@@ -23,7 +23,7 @@ A example run for just constructing a database
 ```bash
 nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
 ```
-The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change the lines *conda "${baseDir}/envs/ncbi.yml"*, *conda "${baseDir}/envs/busco.yml"*, and *conda "${baseDir}/envs/orthofinder.yml"* to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
+The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change in the *impclass.nf* the lines *conda "${baseDir}/envs/ncbi.yml"*, *conda "${baseDir}/envs/busco.yml"*, and *conda "${baseDir}/envs/orthofinder.yml"* to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
 
 ## Additional parameters and others
 
