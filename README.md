@@ -57,9 +57,13 @@ The basic structure of the results directory is show below.
 ```
 
 -**busco_proteins** contains the single copy BUSCOs predicted for the reference genomes and the summary of the BUSCO runs for each genome
+
 -**identify_buscos** contains the single copy BUSCOs predicted for the genomes to identify and the summary of the BUSCO runs for each genome
+
 -**ncbi_dataset.zip** contains the dehidrated genomes downloaded from the NCBI
+
 -**orthofinder_assign** contains the results of the assign step of Orthofinder3, which is where you will find the species tree with the genomes to identify inside the Species_Tree folder. ***The SpeciesTree_rooted.txt*** file inside this folder is the tree you need to look at to see in which clade your genomes ended, as **currently there is no automatic output of the classification** of the genomes to identify. The folder includes also many other results files that are explained in details in the Orthofinder sites (https://github.com/OrthoFinder/OrthoFinder) and (https://orthofinder.org/). 
+
 -**orthofinder_db** contains the core database used to assign the new genomes. This can be re-used for further analysis (i.e. if you find that just the NCBI reference genomes do not give you enough resolution, add additional genomes to the directory with genomes to identify an run the pipeline indicating the folder with the results of the core database)
 
 
