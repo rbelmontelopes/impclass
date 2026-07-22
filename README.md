@@ -45,6 +45,7 @@ The basic structure of the results directory is show below.
 
 .
 ├── busco_proteins
+
 ├── identify_buscos
 ├── ncbi_dataset.zip
 ├── orthofinder_assign
