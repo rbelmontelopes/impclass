@@ -1,53 +1,6 @@
 #!/usr/bin/env nextflow
 
-// do not run if the parameter busco_db is not indicated
-if (!params.busco_db) {
-    error "Missing required parameter: --busco_db"
-}
 
-// do not run if there is no taxon indicated to create the database and there is no prebuild orthodb passed 
-if (!params.orthodb && !params.taxon) {
-    error "When --orthodb is not provided, --taxon is required to build the reference database"
-}
-
-//check if a valid BUSCO predictor is indicated
-if (!params.busco_predictor in ['metaeuk', 'miniprot']) {
-    error "busco_predictor must be either 'metaeuk' or 'miniprot'"
-}
-
-
-// if no busco_downloads path is passed, create a folder in the baseDir
-if (!params.busco_downloads) {
-    params.busco_downloads = "${baseDir}/busco_downloads"
-}
-
-
-// check if directory to identify exists and contain files with the extension .fna
-if (params.identify_dir) {
-
-    identify_path = file(params.identify_dir)
-
-    if (!identify_path.exists()) {
-        error "identify_dir does not exist: ${params.identify_dir}"
-    }
-
-    identify_files = file("${params.identify_dir}/*.fna")
-
-    if (identify_files.size() == 0) {
-        error "No .fna files found in identify_dir: ${params.identify_dir}"
-    }
-}
-
-// check if the orthodb passed exists
-if (params.orthodb) {
-
-    orthodb_path = file(params.orthodb)
-
-    if (!orthodb_path.exists()) {
-        error "Provided OrthoFinder database does not exist: ${params.orthodb}"
-    }
-
-}
 
 
 // download the genomes using NCBI datasets. Will download only the reference genomes for a given taxon
@@ -377,6 +330,56 @@ process COLLECT_BUSCO_PROTEINS {
 
 workflow {
 
+  // do not run if the parameter busco_db is not indicated
+	if (!params.busco_db) {
+   	 	error "Missing required parameter: --busco_db"
+		}
+
+// do not run if there is no taxon indicated to create the database and there is no prebuild orthodb passed 
+	if (!params.orthodb && !params.taxon) {
+    		error "When --orthodb is not provided, --taxon is required to build the reference database"
+		}
+
+//check if a valid BUSCO predictor is indicated
+	if (!params.busco_predictor in ['metaeuk', 'miniprot']) {
+    		error "busco_predictor must be either 'metaeuk' or 'miniprot'"
+		}
+
+
+// if no busco_downloads path is passed, create a folder in the baseDir
+	if (!params.busco_downloads) {
+    		params.busco_downloads = "${baseDir}/busco_downloads"
+		}
+
+
+// check if directory to identify exists and contain files with the extension .fna
+	if (params.identify_dir) {
+
+    		identify_path = file(params.identify_dir)
+
+    	if (!identify_path.exists()) {
+        	error "identify_dir does not exist: ${params.identify_dir}"
+    	}
+
+    	identify_files = file("${params.identify_dir}/*.fna")
+
+    	if (identify_files.size() == 0) {
+        	error "No .fna files found in identify_dir: ${params.identify_dir}"
+    		}
+	}
+
+// check if the orthodb passed exists
+	if (params.orthodb) {
+
+    		orthodb_path = file(params.orthodb)
+
+    	if (!orthodb_path.exists()) {
+        	error "Provided OrthoFinder database does not exist: ${params.orthodb}"
+    		}
+
+	}
+  
+  
   
     busco_db = PREPARE_BUSCO_DB()
    

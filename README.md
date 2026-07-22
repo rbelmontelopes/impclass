@@ -25,19 +25,19 @@ You can change the default output dir (results) with --outdir NEW_DIR_NAME
 
 You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like
 
-nextflow run download_genomes.nf -params-file params.yml
+nextflow run impclass.nf -params-file params.yml
 
 OR
 
-nextflow run download_genomes.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
 
 A example run with a prebuild database
 
-nextflow run download_genomes.nf -params-file params.yml --orthodb ./orthofinder_db/Results_30jun --identify_dir ./to_identify  --busco_db ascomycota_odb10 
+nextflow run impclass.nf -params-file params.yml --orthodb ./orthofinder_db/Results_30jun --identify_dir ./to_identify  --busco_db ascomycota_odb10 
 
 A example run for just constructing a database
 
-nextflow run download_genomes.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
 
 
 Results directory
