@@ -1,0 +1,42 @@
+#Mandatory in all cases, this indicates the BUSCO database to be used to generate a database or identify new genomes.
+busco_db: null
+
+#Where to save the BUSCO database download for re-using. Only change if you already have the downloaded database on a specific folder
+busco_downloads:  "${baseDir}/busco_downloads"
+
+#Which gene predictor to use with BUSCO. Miniprot is faster and uses less memory but can have issues depending on the system or genome, and if needed it can be changed to "metaeuk", which was developed for metagenomes 
+busco_predictor: "miniprot"
+
+#Taxon for downloading the genomes to generate a database. Mandatory if no pre-build database is passed in the 'orthodb' parameter
+taxon: null
+
+#Download only NCBI reference genomes. If false, download all genomes matching the taxon and assembly filters. Note that for the same species/strain, if there are a reference genome, datasets will download both the reference file and the file that represents the deposit that became the reference file (i.e. 'GCF_001642475.1.fna' and 'GCA_001642475.1.fna'), but these will be filtered in a later step to keep only the one starting with 'GCF_'. Anyway, it will yet download several genomes of the same species if there are more than one avaliable (i.e. there are at least 122 genomes of Aspergillus niger besides the reference one. So, if you need a tree with more than the reference genomes, is recomended that you download these manually and add them to the folder of genomes to identify. Besides not downloading a lot of genomes that will not be helpfull for improving the identification of the new genomes, this also has the advantage to speed-up the Orthofinder analysis.
+reference_only: true
+
+#Levels of the genome assemblies that will be downloaded with NCBI datasets
+assembly_level: "complete,chromosome,scaffold,contig"
+
+#name of the results directory
+outdir: "results"
+
+#Directory with the genomes to identify. The script expects that the genome files have the extension '.fna'. If no directory is passed, the pipeline will only build the Orthofinder core database
+identify_dir : null
+
+#If you have a database previously build with Orthofinder3, pass the directory with this parameter. Remember that you need to pass the results folder, i.e. '.../orthofinder_db/Results_Jun30'
+orthodb : null
+
+#Number of CPUs for the BUSCO runs
+cpus : 8
+
+#Number of CPUs for the Orthofinder blast/diamond searches
+orthofinder_threads : 12
+
+#Number of CPUs for the Orthofinder algorithm
+orthofinder_alg : 4
+
+#Number of parallel BUSCO runs for the reference genomes used to build the database. Use with attention as a large number of BUSCO parallel runs can slow all runs. I.e. on a laptop with 20 CPUs running one BUSCO task for the reference genomes with 8 CPUs and one BUSCO task for the genomes to identify with 8 CPUs will use 16 CPUs
+busco_parallel_reference : 1
+
+#Number of parallel BUSCO runs for the genomes to be identified (see above)
+busco_parallel_identify : 1
+

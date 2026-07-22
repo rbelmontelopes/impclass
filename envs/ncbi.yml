@@ -1,0 +1,6 @@
+name: ncbi
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ncbi-datasets-cli

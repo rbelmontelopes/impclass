@@ -1,0 +1,9 @@
+name: busco
+channels:
+  - conda-forge
+  - bioconda
+
+dependencies:
+  - busco
+  - metaeuk
+  - python=3.11
