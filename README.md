@@ -8,21 +8,21 @@ In a certain sense, the present pipeline follows a similar logic used in Buscoge
 #Usage
 
 You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like
-
->nextflow run impclass.nf -params-file params.yml
-
+```bash
+nextflow run impclass.nf -params-file params.yml
+```
 OR
-
->nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
-
+```bash
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
+```
 A example run with a prebuild database
-
->nextflow run impclass.nf -params-file params.yml --orthodb ./orthofinder_db/Results_30jun --identify_dir ./to_identify  --busco_db ascomycota_odb10 
-
+```bash
+nextflow run impclass.nf -params-file params.yml --orthodb ./orthofinder_db/Results_30jun --identify_dir ./to_identify  --busco_db ascomycota_odb10 
+```
 A example run for just constructing a database
-
->nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
-
+```bash
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
+```
 The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change the lines 'conda "${baseDir}/envs/ncbi.yml"', 'conda "${baseDir}/envs/busco.yml"', and 'conda "${baseDir}/envs/orthofinder.yml"' to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
 
 ##Additional parameters and others
