@@ -42,6 +42,7 @@ nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db 
 
 Results directory
 The basic structure of the results directory is show below.
+
 .
 ├── busco_proteins
 ├── identify_buscos
