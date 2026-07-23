@@ -24,7 +24,7 @@ git clone https://github.com/rbelmontelopes/impclass.git
 
 - BUSCO is set to use miniprot as default gene predictor, but sometimes it can crash if running on very fragmented genomes, and in this cases metaeuk seems to perform better (but runtimes are longer). You can change the gene predictor used with the parameter *--busco_predictor* for any of the options BUSCO accepts (*augustus*, *metaeuk*, or *miniprot* in the version used in the pipeline)
 
-- Is mandatory to indicate the taxon that will be used for downloading the genomes and constructing the database (i.e. *--taxon Ascomycota*) or a manually downloaded NCBI dataset (i.e. *--manual_dataset ncbi_dataset.zip*) if you do not pass a previously build orthofinder database folder (i.e.  *--orthodb ./orthofinder_db/Results_30jun*, always use the *Results_XXXX* folder). 
+- Is mandatory to indicate the taxon that will be used for downloading the genomes and constructing the database (i.e. *--taxon Ascomycota*) or a manually downloaded NCBI dataset (i.e. *--manual_dataset ncbi_dataset.zip*) if you do not pass a previously build orthofinder core database folder (i.e.  *--orthodb ./orthofinder_db/Results_30jun*, always use the *Results_XXXX* folder). 
 
 - By default the pipeline will download only reference genomes with assembly level indicated as *complete,chromosome,scaffold* (controled by the *--assembly_level* parameter). Is possible to change this setting  using *--reference_only false*, but this will lead to the download of several genomes of the same species (i.e. there are at least 122 genomes of *Aspergillus niger* besides the reference one)
 
