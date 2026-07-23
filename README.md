@@ -12,36 +12,7 @@ The easiest way is simple clone the git repository, but is also possible to down
 git clone https://github.com/rbelmontelopes/impclass.git
 ```
 
-# Usage
-
-You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like. The *--busco_db* parameter is mandatory in any case, while the *--taxon* parameter is needed in any run that will construct a database (as the taxon name indicates which genomes to download). Below are some examples (assuming running it from the folder of the cloned repository).
-
-```bash
-nextflow run impclass.nf -params-file params.yml --taxon Ascomycota
-```
-OR to construct a database and identify the genomes
-```bash
-nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
-```
-A example run with a prebuild database
-```bash
-nextflow run impclass.nf -params-file params.yml --orthodb PATH/orthofinder_db/Results_30jun --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
-```
-A example run for just constructing a database with an already downloaded BUSCO odb
-```bash
-nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
-```
-A example run using a set of genomes manually downloaded from the NCBI, you can pass the zip file or if already extracted, the path to the folder ncbi_dataset
-```bash
-nextflow run impclass.nf -params-file params.yml --busco_db ascomycota_odb10 --manual_dataset ncbi_dataset.zip
-
-nextflow run impclass.nf -params-file params.yml --busco_db ascomycota_odb10 --manual_dataset PATH_TO_EXTRACTED_DATA/ncbi_dataset
-```
-
-
-The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change in the *impclass.nf* the lines *conda "${baseDir}/envs/ncbi.yml"*, *conda "${baseDir}/envs/busco.yml"*, and *conda "${baseDir}/envs/orthofinder.yml"* to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
-
-## Additional parameters and others
+## Parameters and limitations
 
 - By default the pipeline will download only the reference genomes of a given taxon to construct the core Orthofinder database, but this can be not enough for the placement of some genomes. In these cases, is suggested to add non-reference genomes to the *--identify_dir* folder and run it again using the previously build database using the *--ortho_db* option. Also note that for some taxa there will a large number of reference genomes with several representatives of a single clade or genera (i.e. for Ascomycota there are already more than 3,900 reference genomes, of which 182 are from the genera *Aspergillus*), so is recommended to try to narrow down the taxon (i.e. Lecanoromycetes for a Ascomycota lichenized fungi) or taxa to be used (NCBI datasets accepts multiple taxa names separated by commas) if the number of reference genomes is too big (a very large number of genomes will also need to increase the number of files Orthofinder can open at the same time using the *ulimit -n number_of_files* and will require a lot of RAM memory). Eukcc2 or BUSCO auto-lineage can be used first to narrow down the list of taxa (as said before, ***this pipeline is not intended as a primary classification tool***). 
 
@@ -60,6 +31,45 @@ The first time the pipeline is run, it will create the conda enviroments that ar
 - You can also adjust the number of threads for Orthofinder steps with (i.e *--orthofinder_threads 12 --orthofinder_alg 4*).
 
 - You can change the default output dir (results) with *--outdir NEW_DIR_NAME*
+
+
+# Usage
+
+The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change in the *impclass.nf* the lines *conda "${baseDir}/envs/ncbi.yml"*, *conda "${baseDir}/envs/busco.yml"*, and *conda "${baseDir}/envs/orthofinder.yml"* to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
+
+You can edit the parameters in the params.yml file, or overide in the command line. A example run that will create a reference orthofinder database and run the genomes to identify would be like. The *--busco_db* parameter is mandatory in any case, while the *--taxon* parameter is needed in any run that will construct a database (as the taxon name indicates which genomes to download). Below are some examples (assuming running it from the folder of the cloned repository).
+
+- This will just construct a core database
+```bash
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --busco_db ascomycota_odb10 
+```
+
+- A example run for just constructing a database with an already downloaded BUSCO odb (if the BUSCO obd was previously downloaded using the pipeline there is no need to use this, is intended for cases when the databases were previously donwloaded for use with BUSCO)
+```bash
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
+```
+
+- If there is need to specify in more the details the taxa to download for the construction of the core database
+```bash
+nextflow run impclass.nf -params-file params.yml --taxon Lecanora,Pyrrhospora,Puttea,Stereocaulaceae,Cladoniaceae,Parmeliaceae --busco_db ascomycota_odb10
+```
+
+- A example run using a set of genomes manually downloaded from the NCBI, you can pass the zip file or if already extracted, the path to the folder ncbi_dataset
+```bash
+nextflow run impclass.nf -params-file params.yml --busco_db ascomycota_odb10 --manual_dataset ncbi_dataset.zip
+
+nextflow run impclass.nf -params-file params.yml --busco_db ascomycota_odb10 --manual_dataset PATH_TO_EXTRACTED_DATA/ncbi_dataset
+```
+
+- To construct a database and identify the genomes
+```bash
+nextflow run impclass.nf -params-file params.yml --taxon Ascomycota --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
+```
+
+- A example with a prebuild database
+```bash
+nextflow run impclass.nf -params-file params.yml --orthodb PATH/orthofinder_db/Results_30jun --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
+```
 
 # Expected results
 
