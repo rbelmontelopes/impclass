@@ -24,7 +24,9 @@ git clone https://github.com/rbelmontelopes/impclass.git
 
 - BUSCO is set to use miniprot as default gene predictor, but sometimes it can crash if running on very fragmented genomes, and in this cases metaeuk seems to perform better (but runtimes are longer). You can change the gene predictor used with the parameter *--busco_predictor* for any of the options BUSCO accepts (*augustus*, *metaeuk*, or *miniprot* in the version used in the pipeline)
 
-- If you do not pass a previously build orthofinder database folder (i.e.  *--orthodb ./orthofinder_db/Results_30jun*, always use the Results_XXXX folder), is obligatory to indicate the taxon that will be used for downloading the genomes and constructing the database (i.e. *--taxon Ascomycota*). By default the pipeline will download only reference genomes with assembly level indicated as *complete,chromosome,scaffold* (controled by the *--assembly_level* parameter). 
+- Is mandatory to indicate the taxon that will be used for downloading the genomes and constructing the database (i.e. *--taxon Ascomycota*) or a manually downloaded NCBI dataset (i.e. *--manual_dataset ncbi_dataset.zip*) if you do not pass a previously build orthofinder database folder (i.e.  *--orthodb ./orthofinder_db/Results_30jun*, always use the *Results_XXXX* folder). 
+
+- By default the pipeline will download only reference genomes with assembly level indicated as *complete,chromosome,scaffold* (controled by the *--assembly_level* parameter). Is possible to change this setting  using *--reference_only false*, but this will lead to the download of several genomes of the same species (i.e. there are at least 122 genomes of *Aspergillus niger* besides the reference one)
 
 - Is highly indicated that you set the number of cpus for BUSCO (i.e. *--cpus 8*) as well as number of parallel BUSCO runs you can do in your system for the reference genomes (i.e *--busco_parallel_reference 1*) and for the genomes that you want to identify (i.e *--busco_parallel_identify 1*). Multiple BUSCO runs at the same time can slow this step, so set the number of parallel tasks accordingly to the capacity of your system. On a laptop with 20 cores one parallel task for each seems to be the best option.
 
@@ -99,6 +101,8 @@ The basic structure of the results directory is show below.
 The pipeline was build on Ubuntu 22.04 and nextflow 24.04.4, and also tested in Ubuntu 26 with nextflow 26.04.06, and is expected to work in other Unix based systems, but is unsure if it will work on Windows based machines due to the use of Unix command line tools.
 
 It relies on Conda/Mamba to install the needed enviroments (*ncbi_datasets_cli*,*BUSCO*, and *Orthofinder3*), and it also uses Unix command line tools as *cat*, *grep*, *jq*, and *mkdir*.
+
+The script will also output execution reports to the Results folder. A test run (13th Gen Intel(R) Core(TM) i9-13900H, running on a SSD) with the taxon set to *Fonsecaea*, that downloads 6 genomes, and another 2 *Fonsecaea* non-reference genomes passed as to identify took 2h 57m 51s to execute with the parameters found in the *params.yml* file. The BUSCO runs had the longer durations and cpu usage, while the creation of the Orthofinder core database was the step that used more RAM memory.
 
 
 # References
