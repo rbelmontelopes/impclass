@@ -16,6 +16,10 @@ reference_only: true
 #Levels of the genome assemblies that will be downloaded with NCBI datasets
 assembly_level: "complete,chromosome,scaffold,contig"
 
+# ZIP file downloaded manually from the NCBI Datasets website.
+# If provided, DOWNLOAD_DEHYDRATED is skipped.
+manual_dataset: null
+
 #name of the results directory
 outdir: "results"
 

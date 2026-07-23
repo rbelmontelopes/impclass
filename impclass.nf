@@ -1,8 +1,6 @@
 #!/usr/bin/env nextflow
 
 
-
-
 // download the genomes using NCBI datasets. Will download only the reference genomes for a given taxon
 process DOWNLOAD_DEHYDRATED {
 
@@ -50,6 +48,30 @@ process REHYDRATE {
     """
     unzip -q ${zipfile} -d ncbi_dataset
     datasets rehydrate --directory ncbi_dataset
+    """
+}
+
+
+process LOAD_MANUAL_DATASET {
+
+    input:
+    path dataset
+
+    output:
+    path "ncbi_dataset/data/assembly_data_report.jsonl"
+    path "ncbi_dataset/data/*/*.fna"
+
+    script:
+    """
+    if [[ "${dataset.name}" == *.zip ]]; then
+
+        unzip -q ${dataset} -d .
+
+    else
+
+        cp -r ${dataset} ncbi_dataset
+
+    fi
     """
 }
 
@@ -335,10 +357,19 @@ workflow {
    	 	error "Missing required parameter: --busco_db"
 		}
 
-// do not run if there is no taxon indicated to create the database and there is no prebuild orthodb passed 
-	if (!params.orthodb && !params.taxon) {
-    		error "When --orthodb is not provided, --taxon is required to build the reference database"
-		}
+// One of these must be provided:
+//   --orthodb
+//   --manual_dataset
+//   --taxon
+if (!params.orthodb && !params.manual_dataset && !params.taxon) {
+    error """
+You must provide one of:
+
+  --orthodb <Results_* directory>
+  --manual_dataset <NCBI zip or extracted ncbi_dataset folder>
+  --taxon <taxon name>
+"""
+}
 
 //check if a valid BUSCO predictor is indicated
 	if (!params.busco_predictor in ['metaeuk', 'miniprot']) {
@@ -378,6 +409,17 @@ workflow {
     		}
 
 	}
+	
+// check manual NCBI dataset
+if (params.manual_dataset) {
+
+    manual_path = file(params.manual_dataset)
+
+    if (!manual_path.exists()) {
+        error "manual_dataset does not exist: ${params.manual_dataset}"
+    }
+
+}
   
   
   
@@ -392,14 +434,25 @@ workflow {
         file(params.orthodb)
     )
 
-    } else {
-    
-    zip = DOWNLOAD_DEHYDRATED()
-    data = REHYDRATE(zip)
+} else {
 
-    renamed=RENAME_FASTA(
-        data[0],   // assembly_data_report.jsonl
-        data[1]    // FASTA files
+    if (params.manual_dataset) {
+
+        data = LOAD_MANUAL_DATASET(
+            file(params.manual_dataset)
+        )
+
+    } else {
+
+        zip = DOWNLOAD_DEHYDRATED()
+
+        data = REHYDRATE(zip)
+
+    }
+
+    renamed = RENAME_FASTA(
+        data[0],      // assembly_data_report.jsonl
+        data[1]       // FASTA files
     ).fasta
     
     renamed = renamed.flatten()

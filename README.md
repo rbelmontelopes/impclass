@@ -27,15 +27,23 @@ A example run with a prebuild database
 ```bash
 nextflow run impclass.nf -params-file params.yml --orthodb PATH/orthofinder_db/Results_30jun --identify_dir PATH/to_identify  --busco_db ascomycota_odb10 
 ```
-A example run for just constructing a database
+A example run for just constructing a database with an already downloaded BUSCO odb
 ```bash
 nextflow run impclass.nf -params-file params.yml --taxon Ascomycota  --busco_db ascomycota_odb10 --busco_downloads my_folder/busco_downloads
 ```
+A example run using a set of genomes manually downloaded from the NCBI, you can pass the zip file or if already extracted, the path to the folder ncbi_dataset
+```bash
+nextflow run impclass.nf -params-file params.yml --busco_db ascomycota_odb10 --manual_dataset ncbi_dataset.zip
+
+nextflow run impclass.nf -params-file params.yml --busco_db ascomycota_odb10 --manual_dataset PATH_TO_EXTRACTED_DATA/ncbi_dataset
+```
+
+
 The first time the pipeline is run, it will create the conda enviroments that are needed to run all the steps, what could take some time. The pipeline is enabled to use mamba instead of conda to be faster, but you need to have mamba installed, otherwise will fallback to using conda to create the environments. If you already have all the dependencies installed, an option is to change in the *impclass.nf* the lines *conda "${baseDir}/envs/ncbi.yml"*, *conda "${baseDir}/envs/busco.yml"*, and *conda "${baseDir}/envs/orthofinder.yml"* to the respective paths were the conda enviroments are (i.e. ~/anaconda/envs/orthofinder) or simply remove these lines if everything is already reachable from the base terminal.
 
 ## Additional parameters and others
 
-By default the pipeline will download only the reference genomes of a given taxon to construct the core Orthofinder database, but this can be not enough for the placement of some genomes. In these cases, is suggested to add non-reference genomes to the *--identify_dir* folder and run it again using the previously build database using the *--ortho_db* option. Also note that for some taxa there will a large number of reference genomes (i.e. for Ascomycota there are already more than 3,900 reference genomes), so is recommended to try to narrow down the taxon (i.e. Lecanoromycetes for a Ascomycota lichenized fungi) or taxa to be used (NCBI datasets accepts multiple taxa) if the number of reference genomes is too big (a very large number of genomes will also need to increase the number of files Orthofinder can open at the same time using the *ulimit -n number_of_files* and will require a lot of RAM memory). Eukcc2 or BUSCO auto-lineage can be used first to narrow down the list of taxa (as said before, ***this pipeline is not intended as a primary classification tool***)
+By default the pipeline will download only the reference genomes of a given taxon to construct the core Orthofinder database, but this can be not enough for the placement of some genomes. In these cases, is suggested to add non-reference genomes to the *--identify_dir* folder and run it again using the previously build database using the *--ortho_db* option. Also note that for some taxa there will a large number of reference genomes with several representatives of a single clade or genera (i.e. for Ascomycota there are already more than 3,900 reference genomes, of which 182 are from the genera *Aspergillus*), so is recommended to try to narrow down the taxon (i.e. Lecanoromycetes for a Ascomycota lichenized fungi) or taxa to be used (NCBI datasets accepts multiple taxa) if the number of reference genomes is too big (a very large number of genomes will also need to increase the number of files Orthofinder can open at the same time using the *ulimit -n number_of_files* and will require a lot of RAM memory). Eukcc2 or BUSCO auto-lineage can be used first to narrow down the list of taxa (as said before, ***this pipeline is not intended as a primary classification tool***)
 
 The pipeline have a lot of parameters (see the *params.yml* file for more details), of which the only obligatory in all cases is the busco database to be used (i.e. *--busco_db ascomycota_odb10*). You can change these directly in the *params.yml* file or pass the parameters using the call in the command line.
 
