@@ -170,27 +170,66 @@ process RUN_BUSCO {
     output:
     path "single_copy_buscos/*.faa"
     path "single_copy_buscos/*.txt"
+    path "single_copy_buscos/*.FAILED", optional: true
 
     script:
-    """
-    mkdir -p single_copy_buscos
-    
- 
-        busco -i ${fasta} \
-            -m genome \
-            -l ${params.busco_db} \
-            -c ${task.cpus} \
-            -o ${fasta.simpleName}_busco_genome_${params.busco_db} \
-            --${params.busco_predictor} \
-            -f \
-            --download_path ${params.busco_downloads} \
-            --offline \
+	"""
+	mkdir -p single_copy_buscos
 
-        cat ${fasta.simpleName}_busco_genome_${params.busco_db}/run_${params.busco_db}/busco_sequences/single_copy_busco_sequences/*.faa \
-            > single_copy_buscos/${fasta.simpleName}.faa
-        cp ${fasta.simpleName}_busco_genome_${params.busco_db}/run_${params.busco_db}/short_summary.txt single_copy_buscos/${fasta.simpleName}_${params.busco_db}.summary.txt    
-    
-    """
+	busco \
+    	-i ${fasta} \
+    	-m genome \
+    	-l ${params.busco_db} \
+    	-c ${task.cpus} \
+    	-o ${fasta.simpleName}_busco_genome_${params.busco_db} \
+    	--${params.busco_predictor} \
+    	-f \
+    	--download_path ${params.busco_downloads} \
+    	--offline
+
+	BUSCO_DIR="${fasta.simpleName}_busco_genome_${params.busco_db}/run_${params.busco_db}"
+	FAA_DIR="\$BUSCO_DIR/busco_sequences/single_copy_busco_sequences"
+
+	if ls "\$FAA_DIR"/*.faa >/dev/null 2>&1; then
+
+    		cat "\$FAA_DIR"/*.faa \
+        	> single_copy_buscos/${fasta.simpleName}.faa
+
+    		cp "\$BUSCO_DIR/short_summary.txt" \
+        	single_copy_buscos/${fasta.simpleName}_${params.busco_db}.summary.txt
+
+	else
+
+    	{
+        	echo "Genome: ${fasta.simpleName}"
+        	echo "Reason: BUSCO completed but no single-copy BUSCO proteins were generated."
+        	echo
+        	grep -A8 "^C:" "\$BUSCO_DIR/short_summary.txt"
+    	} > single_copy_buscos/${fasta.simpleName}.FAILED
+
+    	cp "\$BUSCO_DIR/short_summary.txt" \
+        	single_copy_buscos/${fasta.simpleName}_${params.busco_db}.summary.txt \
+        	2>/dev/null || true
+
+	fi
+	"""
+	
+}	
+// report any BUSCO run that failed	
+process REPORT_FAILED_BUSCOS {
+
+    	publishDir "${params.outdir}", mode: 'copy'
+
+    	input:
+    	path failed
+
+    	output:
+    	path "BUSCO_failed_genomes.txt"
+
+    	script:
+    	"""
+    	cat ${failed} > BUSCO_failed_genomes.txt
+    	"""
 }
 
 // run busco to get the single copy busco proteins from the genomes to identify
@@ -463,6 +502,8 @@ if (params.manual_dataset) {
     "reference_buscos"
     )
  
+    failed = reference_proteins[2].collect()
+    REPORT_FAILED_BUSCOS(failed)
 
     reference_proteins = COLLECT_BUSCO_PROTEINS(
     reference_proteins[0].collect(),
