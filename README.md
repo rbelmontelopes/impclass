@@ -6,7 +6,7 @@ In a certain sense, the present pipeline follows a similar logic used in Buscoge
 
 # Installation
 
-The easiest way is simple clone the git repository, but is also possible to download everything manually. It needs nexflow and conda/mamba istalled to run.
+The easiest way is simple clone the git repository, but is also possible to download everything manually. It needs nexflow and conda/mamba installed to run.
 
 ```bash
 git clone https://github.com/rbelmontelopes/impclass.git
